@@ -13,8 +13,6 @@ namespace LoggerLib
 
         private static readonly DateTime _startTime = DateTime.Now;
 
-        private readonly FileStream _file;
-
         private readonly StreamWriter _writer;
 
         private readonly string _timeFormat;
@@ -41,13 +39,11 @@ namespace LoggerLib
                         _startTime.ToString(timeFormat_file), logPath.Substring(lastPoint));
                 else
                     logPath += _startTime;
-                if (logPath.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
-                    #endregion
-                    #region Open file stream and add some basic information
-                    this._file = new FileStream(logPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
-                this._writer = new StreamWriter(this._file);
+                #endregion
+                #region Open file stream and add some basic information
+                this._writer = File.CreateText(logPath);
                 this._writer.AutoFlush = true;
-                this._writer.WriteLine(this._file.Name);
+                this._writer.WriteLine(logPath);
                 this._writer.WriteLine(_startTime.ToLongDateString());
                 this._writer.WriteLine();
                 #endregion
@@ -92,7 +88,6 @@ namespace LoggerLib
         public void Dispose()
         {
             this._writer.Close();
-            this._file.Close();
         }
     }
 }
